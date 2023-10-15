@@ -1,5 +1,6 @@
 # AST_rename_iden
 js混淆变量名优化
+csdn： https://blog.csdn.net/weixin_52728062?type=blog
 // 变量名映射说明
 
 // glb 全局变量
