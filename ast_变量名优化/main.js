@@ -67,7 +67,8 @@ const dectet_node = {
 
         // console.log(path+'')
         if (name.indexOf('loc') !== -1 || name.indexOf('glb') !== -1)return ;
-        if (name.indexOf(detect_name) === -1 || detect_name !== '')return ;
+        if (detect_name !== '' && name.indexOf(detect_name) === -1)return ;
+
         let bing = scope.getBinding(name)
 
         let new_name;
@@ -216,7 +217,7 @@ traverse(AST_, {
 
             if (types.isIdentifier(id)){
                 let old_name = id.name;
-                if (old_name.indexOf(detect_name) !== -1 || detect_name === ''){
+                if (detect_name !== '' && old_name.indexOf(detect_name) !== -1){
                     let bing = scope.getBinding(old_name);
                     let new_name = 'fun'+path.scope.generateUidIdentifier('Dec').name;
 
@@ -257,7 +258,7 @@ traverse(AST_, {
                         console.log('出现特殊形参 : ' + generator(params[i]).code)
                         continue
                     }
-                    if (old_name.indexOf(detect_name) === -1 || detect_name !== '') continue
+                    if (detect_name !== '' && old_name.indexOf(detect_name) === -1) continue
 
                     while (true){
                         count += 1
