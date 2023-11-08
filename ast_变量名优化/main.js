@@ -55,8 +55,9 @@ var cache_array = {
 
 }
 
-var detect_name = '' // 过滤变量名特征 ，只对含有这个字符串的变量名进行替换
-// var detect_name = '_0x' //
+// 如果是1 ，则替换变量名长度为1的
+// var detect_name = 1 // 过滤变量名特征 ，只对含有这个字符串的变量名进行替换
+var detect_name = '_0x' //
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 const dectet_node = {
@@ -67,7 +68,7 @@ const dectet_node = {
 
         // console.log(path+'')
         if (name.indexOf('loc') !== -1 || name.indexOf('glb') !== -1)return ;
-        if (detect_name !== '' && name.indexOf(detect_name) === -1)return ;
+        if ((typeof detect_name !== 'number' && detect_name !== '' && name.indexOf(detect_name) === -1) && (detect_name !== name.length))return ;
 
         let bing = scope.getBinding(name)
 
@@ -187,16 +188,20 @@ traverse(AST_, {
                 })
             }else {
                 dec_scope = 'loc'
-                let parent_func = path.getFunctionParent().node
-                if (!cache_array[parent_func.start]){
-                    cache_array[parent_func.start] = {}
+                let pp = path.getFunctionParent()
+                if (pp){
+                    let parent_func = pp.node
+                    if (!cache_array[parent_func.start]){
+                        cache_array[parent_func.start] = {}
+                    }
+
+                    path.traverse(dectet_node, {
+                        kind,
+                        dec_scope,
+                        parent_func
+                    })
                 }
 
-                path.traverse(dectet_node, {
-                    kind,
-                    dec_scope,
-                    parent_func
-                })
             }
 
     },
@@ -217,7 +222,7 @@ traverse(AST_, {
 
             if (types.isIdentifier(id)){
                 let old_name = id.name;
-                if (detect_name !== '' && old_name.indexOf(detect_name) !== -1){
+                if ((typeof detect_name !== 'number' && detect_name !== '' && old_name.indexOf(detect_name) !== -1) || (detect_name === old_name.length)){
                     let bing = scope.getBinding(old_name);
                     let new_name = 'fun'+path.scope.generateUidIdentifier('Dec').name;
 
@@ -258,7 +263,7 @@ traverse(AST_, {
                         console.log('出现特殊形参 : ' + generator(params[i]).code)
                         continue
                     }
-                    if (detect_name !== '' && old_name.indexOf(detect_name) === -1) continue
+                    if ((typeof detect_name !== 'number' && detect_name !== '' && old_name.indexOf(detect_name) === -1) && (detect_name !== old_name.length)) continue
 
                     while (true){
                         count += 1
